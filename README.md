@@ -107,7 +107,7 @@ Yes. The admin/group entry stores a JSON array of trigger group names.
 
 ## 📄 License
 
-MIT © [Your Name or Company]
+MIT © PawHost.de
 
 ---
 
