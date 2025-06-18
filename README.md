@@ -1,92 +1,117 @@
-# WHMCS Telegram Admin Notification Addon
+# WHMCS Telegram Notification Module
 
-Dieses Addon erweitert WHMCS um die Möglichkeit, Telegram-Benachrichtigungen gezielt an einzelne Admins oder Gruppen zu senden. Dabei können Telegram-Chat-IDs einzelnen WHMCS-Admins oder Telegram-Gruppen (Gruppenchats) zugewiesen werden. Außerdem können Trigger-Gruppen definiert und Admins/Gruppen diesen zugewiesen werden, um Benachrichtigungen je nach Kategorie zu filtern.
+![Telegram Logo](https://telegram.org/img/t_logo.png)
 
----
+Send automated admin notifications from WHMCS to Telegram based on trigger groups. Supports multiple admins, chat groups, and configurable alert scopes.
 
-## Funktionen
+## 📦 Features
 
-- Verwaltung von Admin-Zuweisungen mit Telegram-Chat-IDs
-- Verwaltung von Trigger-Gruppen (z.B. Support, Billing, Sales)
-- Mehrfachauswahl von Trigger-Gruppen pro Admin/Chat
-- Unterstützung von Gruppen-Chats (Telegram-Gruppen)
-- Editieren und Löschen von Admin-Zuweisungen und Gruppen
-- Dropdown mit wiederkehrenden Trigger-Gruppen für einfache Auswahl
-
----
-
-## Installation
-
-1. **Addon-Dateien hochladen**  
-   Lade den Ordner `telegram_addon` in dein WHMCS-Verzeichnis unter `/modules/addons/` hoch.
-
-2. **Addon aktivieren**  
-   - Melde dich im WHMCS Admin-Bereich an.
-   - Gehe zu **Setup > Addon Modules**.
-   - Aktiviere das Addon `Telegram Admin Notification`.
-   - Klicke auf „Aktivieren“. Dabei werden die benötigten Datenbanktabellen automatisch angelegt.
-
-3. **Telegram Notification Modul konfigurieren**  
-   - Gehe zu **Setup > Notifications > Manage Notification Modules**.
-   - Aktiviere das Telegram Notification Modul.
-   - Trage deinen Telegram-Bot-Token und ggf. eine Standard-Chat-ID ein.
-   - Speichere die Einstellungen.
+- 🔔 Send WHMCS admin notifications directly to Telegram
+- 👥 Assign multiple Telegram chat IDs or groups per admin
+- 🧠 Filter notifications using **Trigger Groups**
+- ✅ Easy bot setup with test connection support
+- 🛠 Built for WHMCS's native notification system
 
 ---
 
-## Konfiguration des Addons
+## 📸 Screenshots
 
-### Admin-Zuweisungen verwalten
+### Admin & Group Assignment
+> _Example of linking WHMCS Admins and Telegram groups_
 
-- Öffne im Adminbereich unter **Addon Modules > Telegram Admin Notification** das Addon.
-- Hier kannst du:
+![Admin Assignment Screenshot](screenshots/admin-assignment.png)
 
-  - Einen WHMCS-Admin auswählen.
-  - Die zugehörige Telegram-Chat-ID (oder Gruppen-Chat-ID) eingeben.
-  - Trigger-Gruppen per Mehrfachauswahl zuweisen.
+### Trigger Group Management
+> _Add, remove, and manage custom trigger groups_
 
-- Klicke auf **Speichern**, um die Zuweisung anzulegen oder zu aktualisieren.
+![Trigger Groups Screenshot](screenshots/trigger-groups.png)
 
-> ![Screenshot: Admin-Zuweisung anlegen](./screenshots/admin-zuweisung.png)
+### Notification in Telegram
+> _How notifications appear in your Telegram app_
 
----
-
-### Trigger-Gruppen verwalten
-
-- Unterhalb der Admin-Zuweisungen findest du die Verwaltung der Trigger-Gruppen.
-- Du kannst neue Gruppen hinzufügen oder bestehende löschen.
-- Die Gruppen dienen als Filter für unterschiedliche Arten von Benachrichtigungen (z.B. Support, Billing).
-
-> ![Screenshot: Trigger-Gruppen Verwaltung](./screenshots/trigger-gruppen.png)
+![Telegram Message Screenshot](screenshots/telegram-notification.png)
 
 ---
 
-## Benutzung
+## 🚀 Installation
 
-- Beim Anlegen von Notifications in WHMCS kannst du im Feld **Trigger Identifier** einen der definierten Gruppennamen (z.B. „Support“) angeben.
-- Das Addon sorgt dann dafür, dass nur Admins oder Gruppen mit dieser Trigger-Gruppe die Telegram-Benachrichtigung erhalten.
+1. **Upload the module**
+   - Place the files under:  
+     `modules/notifications/telegram/`
 
----
+2. **Create the required database tables**
+   - You can use the activation SQL or use the legacy activation module to auto-create:
+     - `mod_telegram_admins`
+     - `mod_telegram_groups`
+     - `mod_telegram_chatgroups`
 
-## Hinweise
+3. **Configure the module in WHMCS**
+   - Go to: `Setup` > `Notifications`
+   - Add new notification rule with "Telegram" as the provider
+   - Enter your **Telegram Bot Token**
 
-- Telegram-Chat-IDs für Benutzer erhältst du, indem du dem Bot eine Nachricht sendest und die ID über Bot-Tools abrufst.
-- Gruppen-Chat-IDs kannst du mit entsprechenden Telegram-Bot-Kommandos oder über APIs ermitteln.
-- Für Mehrfachauswahl in den Trigger-Gruppen halte Strg (Windows) oder Cmd (Mac) gedrückt.
-
----
-
-## Support & Entwicklung
-
-Bei Fragen, Fehlern oder Feature-Wünschen kannst du gerne Issues im GitHub-Repository eröffnen.
-
----
-
-## Lizenz
-
-Dieses Addon steht unter der MIT-Lizenz.
+4. **Set up Trigger Groups**
+   - Assign WHMCS admins or Telegram chat groups to specific trigger groups
+   - Only these will receive the corresponding notifications
 
 ---
 
-*Screenshots folgen noch…*
+## 🤖 How to Get a Telegram Bot Token
+
+1. Open Telegram and start a chat with [@BotFather](https://t.me/BotFather)
+2. Run `/newbot` and follow the instructions
+3. Copy the **Bot Token** provided
+
+---
+
+## 🧪 Testing
+
+To verify your Telegram bot configuration:
+- Use the **Test Connection** button in the module settings
+- A test message will be sent to the first available chat ID in your configuration
+
+---
+
+## 🛠 Customization
+
+- To define custom trigger groups, insert them into `mod_telegram_groups` table
+- Extend filtering logic by modifying the `sendNotification()` method
+
+---
+
+## 🧾 Database Tables
+
+| Table | Purpose |
+|-------|---------|
+| `mod_telegram_admins` | Stores admin/chat ID and group mappings |
+| `mod_telegram_groups` | Defines logical trigger categories |
+| `mod_telegram_chatgroups` | Named Telegram chat group entries |
+
+---
+
+## ❓ FAQ
+
+### Can I send messages to group chats?
+
+Yes. Use the group’s chat ID (e.g. `-1001234567890`) when assigning.
+
+### Are Markdown messages supported?
+
+Yes. Telegram messages use Markdown parse mode by default.
+
+### Can I assign multiple groups to one chat ID?
+
+Yes. The admin/group entry stores a JSON array of trigger group names.
+
+---
+
+## 📄 License
+
+MIT © [Your Name or Company]
+
+---
+
+## 🙌 Contributions
+
+Feel free to open issues or PRs to improve this module!
 
