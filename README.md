@@ -81,15 +81,15 @@ Send automated admin notifications from WHMCS to Telegram based on trigger group
 ## 🧪 Testing
 
 To verify your Telegram bot configuration:
-- Use the **Test Connection** button in the module settings
+- Use the **Save Changes** button in the Notification settings
 - A test message will be sent to the first available chat ID in your configuration
 
 ---
 
 ## 🛠 Customization
 
-- To define custom trigger groups, insert them into `mod_telegram_groups` table
-- Extend filtering logic by modifying the `sendNotification()` method
+- To define custom trigger groups, insert them into `Manage Trigger Groups` table
+- Extend filtering logic by modifying the `Notification` settings
 
 ---
 
@@ -113,9 +113,9 @@ Yes. Use the group’s chat ID (e.g. `-1001234567890`) when assigning.
 
 Yes. Telegram messages use Markdown parse mode by default.
 
-### Can I assign multiple groups to one chat ID?
+### Is the bot GDPR/DSGVO compliant?
 
-Yes. The admin/group entry stores a JSON array of trigger group names.
+Yes. No customer data is sent. Only the title and ticket link.
 
 ---
 
