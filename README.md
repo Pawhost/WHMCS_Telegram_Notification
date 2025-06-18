@@ -65,8 +65,8 @@ Send automated admin notifications from WHMCS to Telegram based on trigger group
    - Only these will receive the corresponding notifications
   
 5. **Set up Notification**
-   - Assign WHMCS admins or Telegram chat groups to specific trigger groups
-   - Only these will receive the corresponding notifications
+   - Go to Notifications and create a new notification rule
+   - Set up the event and the conditions. Insert the trigger group under the Telegram field
 
 ---
 
