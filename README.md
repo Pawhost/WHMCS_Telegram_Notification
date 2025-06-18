@@ -26,6 +26,16 @@ Send automated admin notifications from WHMCS to Telegram based on trigger group
 
 ![Trigger Groups Screenshot](screenshots/trigger-groups.png)
 
+### Telegram Group Management
+> _Add, remove, and manage custom Telegram groups_
+
+![Trigger Groups Screenshot](screenshots/telegram-groups.png)
+
+### Notification Trigger
+> _How to set up the trigger to a group_
+
+![Telegram Message Screenshot](screenshots/notification-trigger.png)
+
 ### Notification in Telegram
 > _How notifications appear in your Telegram app_
 
@@ -51,6 +61,10 @@ Send automated admin notifications from WHMCS to Telegram based on trigger group
    - Enter your **Telegram Bot Token**
 
 4. **Set up Trigger Groups**
+   - Assign WHMCS admins or Telegram chat groups to specific trigger groups
+   - Only these will receive the corresponding notifications
+  
+5. **Set up Notification**
    - Assign WHMCS admins or Telegram chat groups to specific trigger groups
    - Only these will receive the corresponding notifications
 
