@@ -16,7 +16,7 @@ class Telegram implements NotificationModuleInterface
     public function __construct()
     {
         $this->setDisplayName('Telegram')
-            ->setLogoFileName('logo.png');
+             ->setLogoFileName('logo.png');
     }
 
     public function settings()
@@ -25,7 +25,7 @@ class Telegram implements NotificationModuleInterface
             'botToken' => [
                 'FriendlyName' => 'Telegram Bot Token',
                 'Type' => 'text',
-                'Description' => 'Token des Telegram-Bots',
+                'Description' => 'Token from the Telegram-Bot.',
                 'Placeholder' => '',
             ],
         ];
@@ -33,6 +33,7 @@ class Telegram implements NotificationModuleInterface
 
     public function notificationSettings()
     {
+        // Load available trigger groups from the database
         $groups = Capsule::table('mod_telegram_groups')->pluck('name')->toArray();
         $options = [];
         foreach ($groups as $group) {
@@ -41,10 +42,10 @@ class Telegram implements NotificationModuleInterface
 
         return [
             'trigger' => [
-                'FriendlyName' => 'Trigger Gruppe',
+                'FriendlyName' => 'Trigger Group',
                 'Type' => 'dropdown',
                 'Options' => $options,
-                'Description' => 'Nur Admins mit dieser Gruppen-Zuordnung erhalten diese Nachricht.',
+                'Description' => 'Only admins assigned to this group will receive this notification.',
             ],
         ];
     }
@@ -56,15 +57,20 @@ class Telegram implements NotificationModuleInterface
 
     public function testConnection($settings)
     {
-        $botToken = $settings['botToken'];
-        $testChatID = Capsule::table('mod_telegram_admins')->value('chat_id');
-
-        if (!$testChatID) {
-            throw new Exception("Keine Test-Chat-ID gefunden.");
+        $botToken = $settings['botToken'] ?? '';
+        if (!$botToken) {
+            throw new Exception("Telegram Bot Token is not set.");
         }
 
-        $message = urlencode("✅ Verbindung zu Telegram erfolgreich.");
+        // Get a test chat ID from the admin assignments
+        $testChatID = Capsule::table('mod_telegram_admins')->value('chat_id');
+        if (!$testChatID) {
+            throw new Exception("No test chat ID found.");
+        }
+
+        $message = urlencode("✅ Connection to Telegram successful.");
         $url = "https://api.telegram.org/bot{$botToken}/sendMessage?chat_id={$testChatID}&text={$message}";
+
         $this->sendTelegramMessage($url);
     }
 
@@ -72,23 +78,34 @@ class Telegram implements NotificationModuleInterface
     {
         $triggerGroup = $notificationSettings['trigger'] ?? '';
         if (!$triggerGroup) {
+            // No trigger group selected, do nothing
             return;
         }
 
         $admins = Capsule::table('mod_telegram_admins')->get();
+
         foreach ($admins as $admin) {
-            $adminGroups = json_decode($admin->groups, true);
+            $adminGroups = json_decode($admin->groups, true) ?: [];
+
             if (!in_array($triggerGroup, $adminGroups)) {
+                // Admin is not in the selected trigger group
                 continue;
             }
 
             $chatID = $admin->chat_id;
-            $botToken = $moduleSettings['botToken'];
+            $botToken = $moduleSettings['botToken'] ?? '';
+            if (!$botToken) {
+                continue; // skip if bot token missing
+            }
 
-            $text = "*" . $notification->getTitle() . "*\n\n" . $notification->getMessage() . "\n\n[Zum Vorgang](" . $notification->getUrl() . ")";
-            $url = "https://api.telegram.org/bot{$botToken}/sendMessage?parse_mode=Markdown&chat_id={$chatID}&text=" . urlencode($text);
+            $title = $notification->getTitle();
+            $message = $notification->getMessage();
+            $urlLink = $notification->getUrl();
 
-            $this->sendTelegramMessage($url);
+            $text = "*" . $title . "*\n\n" . $message . "\n\n[Open](" . $urlLink . ")";
+            $telegramUrl = "https://api.telegram.org/bot{$botToken}/sendMessage?parse_mode=Markdown&chat_id={$chatID}&text=" . urlencode($text);
+
+            $this->sendTelegramMessage($telegramUrl);
         }
     }
 
@@ -106,7 +123,7 @@ class Telegram implements NotificationModuleInterface
         if ($response === false || $httpCode !== 200) {
             $error = curl_error($ch) ?: "HTTP $httpCode";
             curl_close($ch);
-            throw new Exception("Telegram API Fehler: $error");
+            throw new Exception("Telegram API error: $error");
         }
 
         curl_close($ch);
